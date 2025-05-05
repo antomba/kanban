@@ -27,7 +27,7 @@
     <div class="grid grid-cols-3 gap-4 min-h-screen">
         <!-- To Do Column -->
         <div id="todo" class="column bg-white p-4 rounded shadow h-full" data-status="todo">
-            <div class="flex justify-between items-center mb-2">
+            <div class="flex justify-between items-center mb-2 sticky top-0 bg-white z-10">
                 <h2 class="text-xl font-semibold">To Do</h2>
                 <button onclick="addTask('todo')" class="text-sm text-blue-500 hover:underline">+ Add Task</button>
             </div>
@@ -36,7 +36,7 @@
 
         <!-- In Progress Column -->
         <div id="inprogress" class="column bg-white p-4 rounded shadow h-full" data-status="inprogress">
-            <div class="flex justify-between items-center mb-2">
+            <div class="flex justify-between items-center mb-2 sticky top-0 bg-white z-10">
                 <h2 class="text-xl font-semibold">In Progress</h2>
                 <span class="ml-2 text-sm">WIP Limit:</span>
                 <input type="number" id="wip-limit" value="3" min="1" class="w-16 text-sm border rounded px-1"
@@ -47,7 +47,7 @@
 
         <!-- Done Column -->
         <div id="done" class="column bg-white p-4 rounded shadow h-full" data-status="done">
-            <div class="flex justify-between items-center mb-2">
+            <div class="flex justify-between items-center mb-2 sticky top-0 bg-white z-10">
                 <h2 class="text-xl font-semibold">Done</h2>
                 <button onclick="clearDoneColumn()" class="text-sm text-red-500 hover:underline ml-2">Clear</button>
             </div>
