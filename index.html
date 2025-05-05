@@ -49,6 +49,7 @@
         <div id="done" class="column bg-white p-4 rounded shadow h-full" data-status="done">
             <div class="flex justify-between items-center mb-2">
                 <h2 class="text-xl font-semibold">Done</h2>
+                <button onclick="clearDoneColumn()" class="text-sm text-red-500 hover:underline ml-2">Clear</button>
             </div>
             <div class="task-list space-y-2 min-h-full"></div>
         </div>
@@ -189,7 +190,11 @@
 
             inprogressCol.classList.toggle('bg-red-100', taskCount > wipLimit);
         }
-
+        function clearDoneColumn() {
+            const doneTaskList = document.querySelector('#done .task-list');
+            doneTaskList.innerHTML = '';
+            saveBoard();
+        }
         // Initial Load
         loadBoard();
     </script>
