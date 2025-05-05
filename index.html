@@ -14,13 +14,13 @@
     <div class="flex justify-between items-center mb-4">
         <h1 class="text-3xl font-bold">Kanban Board</h1>
         <div class="space-x-2">
-            <button onclick="exportData()"
-                class="inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Export</button>
             <label
                 class="inline-flex items-center justify-center px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition cursor-pointer">
                 <span>Import</span>
                 <input type="file" accept="application/json" onchange="importData(event)" class="hidden" />
             </label>
+            <button onclick="exportData()"
+                class="inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Export</button>
         </div>
     </div>
 
@@ -129,9 +129,14 @@
             const dataStr = localStorage.getItem('kanban-data');
             const blob = new Blob([dataStr], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
+
+            // Get today's date in DDMMYYYY format
+            const today = new Date();
+            const formattedDate = `${String(today.getDate()).padStart(2, '0')}${String(today.getMonth() + 1).padStart(2, '0')}${today.getFullYear()}`;
+
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'kanban-data.json';
+            a.download = `kanban_${formattedDate}.json`;
             a.click();
             URL.revokeObjectURL(url);
         }
