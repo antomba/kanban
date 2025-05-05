@@ -92,10 +92,25 @@
             const template = document.getElementById('task-template');
             const task = template.content.cloneNode(true);
             const input = task.querySelector('.task-title');
+
             setupInputListeners(input);
             taskList.appendChild(task);
-            saveBoard();
-            checkWipLimit();
+            input.focus();
+
+            input.addEventListener('keydown', function handler(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const value = input.value.trim();
+                    if (value) {
+                        input.blur();
+                        saveBoard();
+                        checkWipLimit();
+                    } else {
+                        input.closest('.task').remove();
+                    }
+                    input.removeEventListener('keydown', handler);
+                }
+            });
         }
 
         function deleteTask(button) {
