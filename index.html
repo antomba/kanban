@@ -37,7 +37,7 @@
 
             <!-- In Progress Column -->
             <div id="inprogress" class="column bg-white p-4 rounded shadow h-full" data-status="inprogress">
-                <div class="flex justify-between items-center mb-2 sticky top-0 bg-white z-10">
+                <div class="header flex justify-between items-center mb-2 sticky top-0 bg-white z-10">
                     <h2 class="text-xl font-semibold">In Progress</h2>
                     <span class="ml-2 text-sm">WIP Limit:</span>
                     <input type="number" id="wip-limit" value="3" min="1" class="w-16 text-sm border rounded px-1"
@@ -184,20 +184,28 @@
             const wipInput = document.getElementById('wip-limit');
             const wipLimit = parseInt(wipInput.value, 10);
             const inprogressCol = document.getElementById('inprogress');
+            const header = inprogressCol.querySelector('.header');
             const taskCount = inprogressCol.querySelectorAll('.task').length;
 
             if (wipInput.value === '') {
                 inprogressCol.classList.remove('bg-red-100');
+                header.classList.remove('bg-red-100');
+                header.classList.add('bg-white');
                 return;
             }
 
             if (wipLimit < 1) {
                 wipInput.value = '';
                 inprogressCol.classList.remove('bg-red-100');
+                header.classList.remove('bg-red-100');
+                header.classList.add('bg-white');
                 return;
             }
 
-            inprogressCol.classList.toggle('bg-red-100', taskCount > wipLimit);
+            const overLimit = taskCount > wipLimit;
+            inprogressCol.classList.toggle('bg-red-100', overLimit);
+            header.classList.toggle('bg-red-100', overLimit);
+            header.classList.toggle('bg-white', !overLimit);
         }
         function clearDoneColumn() {
             const doneTaskList = document.querySelector('#done .task-list');
