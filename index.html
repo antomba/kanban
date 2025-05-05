@@ -7,7 +7,6 @@
     <title>Kanban Board</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script> <!-- Font Awesome -->
 </head>
 
 <body class="bg-gray-100 p-6 font-sans">
@@ -22,10 +21,6 @@
             </label>
             <button onclick="exportData()"
                 class="inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Export</button>
-            <button onclick="saveToFavorites()"
-                class="inline-flex items-center justify-center px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition">
-                <i class="fas fa-star mr-2"></i> Save to Favorites
-            </button>
         </div>
     </div>
 
@@ -167,11 +162,6 @@
                 }
             };
             reader.readAsText(file);
-        }
-
-        function saveToFavorites() {
-            alert('Kanban Board saved to favorites!');
-            // Add logic here if needed to handle saving to favorites
         }
 
         // Initial Load
