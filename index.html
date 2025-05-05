@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kanban Board</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+</head>
+
+<body class="bg-gray-100 p-6 font-sans">
+
+    <div class="flex justify-between items-center mb-4">
+        <h1 class="text-3xl font-bold">Kanban Board</h1>
+        <div class="space-x-2">
+            <button onclick="exportData()"
+                class="inline-flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Export</button>
+            <label
+                class="inline-flex items-center justify-center px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition cursor-pointer">
+                <span>Import</span>
+                <input type="file" accept="application/json" onchange="importData(event)" class="hidden" />
+            </label>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-3 gap-4">
+        <!-- To Do Column -->
+        <div id="todo" class="column bg-white p-4 rounded shadow" data-status="todo">
+            <div class="flex justify-between items-center mb-2">
+                <h2 class="text-xl font-semibold">To Do</h2>
+                <button onclick="addTask('todo')" class="text-sm text-blue-500 hover:underline">+ Add Task</button>
+            </div>
+            <div class="task-list space-y-2"></div>
+        </div>
+
+        <!-- In Progress Column -->
+        <div id="inprogress" class="column bg-white p-4 rounded shadow" data-status="inprogress">
+            <div class="flex justify-between items-center mb-2">
+                <h2 class="text-xl font-semibold">In Progress</h2>
+                <button onclick="addTask('inprogress')" class="text-sm text-blue-500 hover:underline">+ Add
+                    Task</button>
+            </div>
+            <div class="task-list space-y-2"></div>
+        </div>
+
+        <!-- Done Column -->
+        <div id="done" class="column bg-white p-4 rounded shadow" data-status="done">
+            <div class="flex justify-between items-center mb-2">
+                <h2 class="text-xl font-semibold">Done</h2>
+                <button onclick="addTask('done')" class="text-sm text-blue-500 hover:underline">+ Add Task</button>
+            </div>
+            <div class="task-list space-y-2"></div>
+        </div>
+    </div>
+
+    <!-- Task Template -->
+    <template id="task-template">
+        <div class="task bg-gray-200 p-2 rounded shadow-sm flex justify-between items-center">
+            <input type="text" class="task-title bg-transparent outline-none flex-grow" />
+            <button onclick="deleteTask(this)" class="text-red-500 ml-2">&times;</button>
+        </div>
+    </template>
+
+    <script>
+        const columns = ['todo', 'inprogress', 'done'];
+
+        // Initialize Sortable
+        columns.forEach(col => {
+            const el = document.querySelector(`#${col} .task-list`);
+            new Sortable(el, {
+                group: 'kanban',
+                animation: 150,
+                onEnd: saveBoard
+            });
+        });
+
+        function addTask(column) {
+            const taskList = document.querySelector(`#${column} .task-list`);
+            const template = document.getElementById('task-template');
+            const task = template.content.cloneNode(true);
+            const input = task.querySelector('.task-title');
+            setupInputListeners(input);
+            taskList.appendChild(task);
+            saveBoard();
+        }
+
+        function deleteTask(button) {
+            button.parentElement.remove();
+            saveBoard();
+        }
+
+        function setupInputListeners(input) {
+            input.addEventListener('input', saveBoard);
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    input.blur();
+                    saveBoard();
+                }
+            });
+        }
+
+        function saveBoard() {
+            const data = {};
+            columns.forEach(col => {
+                data[col] = Array.from(document.querySelectorAll(`#${col} .task-title`)).map(input => input.value);
+            });
+            localStorage.setItem('kanban-data', JSON.stringify(data));
+        }
+
+        function loadBoard() {
+            const data = JSON.parse(localStorage.getItem('kanban-data') || '{}');
+            columns.forEach(col => {
+                const taskList = document.querySelector(`#${col} .task-list`);
+                taskList.innerHTML = '';
+                (data[col] || []).forEach(title => {
+                    const template = document.getElementById('task-template');
+                    const task = template.content.cloneNode(true);
+                    const input = task.querySelector('.task-title');
+                    input.value = title;
+                    setupInputListeners(input);
+                    taskList.appendChild(task);
+                });
+            });
+        }
+
+        function exportData() {
+            const dataStr = localStorage.getItem('kanban-data');
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'kanban-data.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+            reader.onload = e => {
+                try {
+                    const data = JSON.parse(e.target.result);
+
+                    // Validate the structure of the imported data
+                    if (typeof data !== 'object' || !Array.isArray(data.todo) || !Array.isArray(data.inprogress) || !Array.isArray(data.done)) {
+                        throw new Error('Invalid file structure');
+                    }
+
+                    // Save the valid data to localStorage and reload the board
+                    localStorage.setItem('kanban-data', JSON.stringify(data));
+                    loadBoard();
+                } catch (error) {
+                    alert('Invalid file format. Please upload a valid Kanban data file.');
+                    console.error('Import error:', error);
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        // Initial Load
+        loadBoard();
+    </script>
+</body>
+
+</html>
