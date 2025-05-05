@@ -81,6 +81,11 @@
                 group: 'kanban',
                 animation: 150,
                 onEnd: () => {
+                    // Remove any tasks with empty titles before saving
+                    el.querySelectorAll('.task').forEach(task => {
+                        const title = task.querySelector('.task-title')?.value.trim();
+                        if (!title) task.remove();
+                    });
                     saveBoard();
                     checkWipLimit();
                 }
@@ -89,6 +94,10 @@
 
         function addTask(column) {
             const taskList = document.querySelector(`#${column} .task-list`);
+            const existingEmptyTask = taskList.querySelector('.task-title:focus');
+            if (existingEmptyTask && existingEmptyTask.value.trim() === '') {
+                return;
+            }
             const template = document.getElementById('task-template');
             const task = template.content.cloneNode(true);
             const input = task.querySelector('.task-title');
@@ -133,7 +142,9 @@
         function saveBoard() {
             const data = {};
             columns.forEach(col => {
-                data[col] = Array.from(document.querySelectorAll(`#${col} .task-title`)).map(input => input.value);
+                data[col] = Array.from(document.querySelectorAll(`#${col} .task-title`))
+                    .map(input => input.value.trim())
+                    .filter(title => title !== '');
             });
             localStorage.setItem('kanban-data', JSON.stringify(data));
         }
@@ -144,6 +155,7 @@
                 const taskList = document.querySelector(`#${col} .task-list`);
                 taskList.innerHTML = '';
                 (data[col] || []).forEach(title => {
+                    if (!title.trim()) return;
                     const template = document.getElementById('task-template');
                     const task = template.content.cloneNode(true);
                     const input = task.querySelector('.task-title');
