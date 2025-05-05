@@ -38,8 +38,9 @@
         <div id="inprogress" class="column bg-white p-4 rounded shadow h-full" data-status="inprogress">
             <div class="flex justify-between items-center mb-2">
                 <h2 class="text-xl font-semibold">In Progress</h2>
-                <button onclick="addTask('inprogress')" class="text-sm text-blue-500 hover:underline">+ Add
-                    Task</button>
+                <span class="ml-2 text-sm">WIP Limit:</span>
+                <input type="number" id="wip-limit" value="3" min="1" class="w-16 text-sm border rounded px-1"
+                    onchange="checkWipLimit()" />
             </div>
             <div class="task-list space-y-2 min-h-full"></div>
         </div>
@@ -48,7 +49,6 @@
         <div id="done" class="column bg-white p-4 rounded shadow h-full" data-status="done">
             <div class="flex justify-between items-center mb-2">
                 <h2 class="text-xl font-semibold">Done</h2>
-                <button onclick="addTask('done')" class="text-sm text-blue-500 hover:underline">+ Add Task</button>
             </div>
             <div class="task-list space-y-2 min-h-full"></div>
         </div>
@@ -71,7 +71,10 @@
             new Sortable(el, {
                 group: 'kanban',
                 animation: 150,
-                onEnd: saveBoard
+                onEnd: () => {
+                    saveBoard();
+                    checkWipLimit();
+                }
             });
         });
 
@@ -83,11 +86,13 @@
             setupInputListeners(input);
             taskList.appendChild(task);
             saveBoard();
+            checkWipLimit();
         }
 
         function deleteTask(button) {
             button.parentElement.remove();
             saveBoard();
+            checkWipLimit();
         }
 
         function setupInputListeners(input) {
@@ -123,6 +128,7 @@
                     taskList.appendChild(task);
                 });
             });
+            checkWipLimit();
         }
 
         function exportData() {
@@ -162,6 +168,26 @@
                 }
             };
             reader.readAsText(file);
+        }
+
+        function checkWipLimit() {
+            const wipInput = document.getElementById('wip-limit');
+            const wipLimit = parseInt(wipInput.value, 10);
+            const inprogressCol = document.getElementById('inprogress');
+            const taskCount = inprogressCol.querySelectorAll('.task').length;
+
+            if (wipInput.value === '') {
+                inprogressCol.classList.remove('bg-red-100');
+                return;
+            }
+
+            if (wipLimit < 1) {
+                wipInput.value = '';
+                inprogressCol.classList.remove('bg-red-100');
+                return;
+            }
+
+            inprogressCol.classList.toggle('bg-red-100', taskCount > wipLimit);
         }
 
         // Initial Load
