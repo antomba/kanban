@@ -24,9 +24,9 @@
         </div>
     </div>
 
-    <div class="grid grid-cols-3 gap-4">
+    <div class="grid grid-cols-3 gap-4 min-h-screen">
         <!-- To Do Column -->
-        <div id="todo" class="column bg-white p-4 rounded shadow" data-status="todo">
+        <div id="todo" class="column bg-white p-4 rounded shadow h-full" data-status="todo">
             <div class="flex justify-between items-center mb-2">
                 <h2 class="text-xl font-semibold">To Do</h2>
                 <button onclick="addTask('todo')" class="text-sm text-blue-500 hover:underline">+ Add Task</button>
@@ -35,7 +35,7 @@
         </div>
 
         <!-- In Progress Column -->
-        <div id="inprogress" class="column bg-white p-4 rounded shadow" data-status="inprogress">
+        <div id="inprogress" class="column bg-white p-4 rounded shadow h-full" data-status="inprogress">
             <div class="flex justify-between items-center mb-2">
                 <h2 class="text-xl font-semibold">In Progress</h2>
                 <button onclick="addTask('inprogress')" class="text-sm text-blue-500 hover:underline">+ Add
@@ -45,7 +45,7 @@
         </div>
 
         <!-- Done Column -->
-        <div id="done" class="column bg-white p-4 rounded shadow" data-status="done">
+        <div id="done" class="column bg-white p-4 rounded shadow h-full" data-status="done">
             <div class="flex justify-between items-center mb-2">
                 <h2 class="text-xl font-semibold">Done</h2>
                 <button onclick="addTask('done')" class="text-sm text-blue-500 hover:underline">+ Add Task</button>
